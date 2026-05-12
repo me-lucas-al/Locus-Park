@@ -37,9 +37,11 @@ public class AuthController {
             );
             var auth = authenticationManager.authenticate(usernamePassword);
 
+            User user = (User) auth.getPrincipal();
+
             var token = tokenService.generateToken((User) auth.getPrincipal());
 
-            return ResponseEntity.ok(new AuthResponse(token));
+            return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getUsername(), user.getRole()));
 
         } catch (BadCredentialsException e) {
             throw new InvalidCredentialsException("Usuário ou senha incorretos");
