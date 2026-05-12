@@ -36,12 +36,45 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    @ExceptionHandler(TokenMissingException.class)
+    public ResponseEntity<ErrorResponse> handleTokenMissing(TokenMissingException ex, HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(ZoneOffset.UTC),
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex, HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(ZoneOffset.UTC),
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(TokenInvalidException.class)
+    public ResponseEntity<ErrorResponse> handleTokenInvalid(TokenInvalidException ex, HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(ZoneOffset.UTC),
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(ZoneOffset.UTC),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "An unexpected error occurred",
+                "Ocorreu um erro inesperado no servidor. Tente novamente.",
                 request.getRequestURI()
         );
         // Em produção, você logaria o erro completo aqui (ex.printStackTrace()) para não expor dados sensíveis na API
