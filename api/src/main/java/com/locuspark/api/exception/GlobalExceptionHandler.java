@@ -53,8 +53,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
 
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
-        // Log the exception in a real scenario
         return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "Ocorreu um erro inesperado no servidor.", request.getRequestURI());
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex, HttpServletRequest request) {
+        // Regras de negócio violadas geralmente retornam HTTP 400 (Bad Request) ou 422 (Unprocessable Entity)
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
     }
 
     private ResponseEntity<ErrorResponse> buildResponseEntity(HttpStatus status, String message, String path) {
