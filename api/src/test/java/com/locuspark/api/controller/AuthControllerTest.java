@@ -59,7 +59,7 @@ class AuthControllerTest {
         @DisplayName("Deve retornar 200 OK e o token no login bem-sucedido")
         void shouldLoginSuccessfully() throws Exception {
             AuthRequest request = new AuthRequest("user", "pass");
-            User mockUser = new User("user", "hashedPass", UserRole.USER);
+            User mockUser = new User("user", "hashedPass", UserRole.EMPLOYEE);
             Authentication auth = mock(Authentication.class);
 
             when(auth.getPrincipal()).thenReturn(mockUser);
@@ -94,7 +94,7 @@ class AuthControllerTest {
         @Test
         @DisplayName("Deve retornar 201 Created quando o registo é bem-sucedido")
         void shouldRegisterSuccessfully() throws Exception {
-            RegisterRequest request = new RegisterRequest("newuser", "password123");
+            RegisterRequest request = new RegisterRequest("newuser", "password123", java.util.UUID.randomUUID());
             when(userRepository.findByUsername("newuser")).thenReturn(null);
             when(passwordEncoder.encode("password123")).thenReturn("hashedPass");
 
@@ -107,7 +107,7 @@ class AuthControllerTest {
         @Test
         @DisplayName("Deve retornar 409 Conflict quando o utilizador já existe")
         void shouldReturn409WhenUserExists() throws Exception {
-            RegisterRequest request = new RegisterRequest("existinguser", "password123");
+            RegisterRequest request = new RegisterRequest("existinguser", "password123", java.util.UUID.randomUUID());
             when(userRepository.findByUsername("existinguser")).thenReturn(new User());
 
             mockMvc.perform(post("/auth/register")

@@ -25,7 +25,7 @@ class TokenServiceTest {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(tokenService, "secret", "test-secret-key-for-unit-tests");
-        user = new User("testuser", "password123", UserRole.USER);
+        user = new User("testuser", "password123", UserRole.EMPLOYEE);
     }
 
     @Nested

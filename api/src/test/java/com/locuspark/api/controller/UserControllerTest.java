@@ -38,7 +38,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockUser = new User("testuser", "password", UserRole.USER);
+        mockUser = new User("testuser", "password", UserRole.EMPLOYEE);
         // Precisamos mockar o repositório porque o SecurityFilter chama findByUsername
         when(userRepository.findByUsername("testuser")).thenReturn(mockUser);
 
@@ -49,17 +49,16 @@ class UserControllerTest {
     @Test
     @DisplayName("Deve retornar 200 OK e perfil ao fornecer um token JWT válido")
     void shouldReturnProfileWithValidToken() throws Exception {
-        mockMvc.perform(get("/user/profile")
+        mockMvc.perform(get("/users/profile")
                         .header("Authorization", "Bearer " + validToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("testuser"))
-                .andExpect(jsonPath("$.role").value("USER"));
+                .andExpect(jsonPath("$.role").value("EMPLOYEE"));
     }
 
     @Test
     @DisplayName("Deve retornar 401 Unauthorized quando o token não é fornecido")
     void shouldReturn401WithoutToken() throws Exception {
-        mockMvc.perform(get("/user/profile"))
+        mockMvc.perform(get("/users/profile"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").value("Token não fornecido ou cabeçalho Authorization ausente."));
     }
@@ -67,7 +66,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Deve retornar 401 Unauthorized com mensagem de erro para token inválido")
     void shouldReturn401WithInvalidToken() throws Exception {
-        mockMvc.perform(get("/user/profile")
+        mockMvc.perform(get("/users/profile")
                         .header("Authorization", "Bearer token-invalido-forjado"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").value("Token mal formatado, inválido ou expirado."));

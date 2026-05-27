@@ -58,7 +58,7 @@ public class AuthController {
 
         String encryptedPassword = passwordEncoder.encode(data.password());
 
-        User newUser = new User(data.username(), encryptedPassword, UserRole.USER);
+        User newUser = new User(data.username(), encryptedPassword, UserRole.EMPLOYEE);
 
         repository.save(newUser);
 
