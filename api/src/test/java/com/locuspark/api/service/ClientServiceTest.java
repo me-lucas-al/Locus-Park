@@ -1,5 +1,6 @@
 package com.locuspark.api.service;
 
+import com.locuspark.api.types.Cpf;
 import com.locuspark.api.dto.request.ClientRequest;
 import com.locuspark.api.dto.response.ClientResponse;
 import com.locuspark.api.entity.Client;
@@ -54,7 +55,7 @@ class ClientServiceTest {
 
         clientRequest = new ClientRequest(
                 "João Silva",
-                "12345678909",
+                "01234567890",
                 "11999999999",
                 ClientType.MENSALISTA
         );
@@ -62,7 +63,7 @@ class ClientServiceTest {
         client = Client.builder()
                 .id(clientId)
                 .name("João Silva")
-                .cpf("12345678909")
+                .cpf(new Cpf("01234567890"))
                 .phone("11999999999")
                 .type(ClientType.MENSALISTA)
                 .company(company)
@@ -71,7 +72,7 @@ class ClientServiceTest {
         clientResponse = new ClientResponse(
                 clientId,
                 "João Silva",
-                "12345678909",
+                "01234567890",
                 "11999999999",
                 ClientType.MENSALISTA,
                 companyId
@@ -87,7 +88,7 @@ class ClientServiceTest {
         void createClientSuccess() {
             // Arrange
             when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
-            when(repository.existsByCpfAndCompanyId(clientRequest.cpf(), companyId)).thenReturn(false);
+            when(repository.existsByCpfAndCompanyId(new Cpf(clientRequest.cpf()), companyId)).thenReturn(false);
             when(mapper.toEntity(clientRequest)).thenReturn(client);
             when(repository.save(client)).thenReturn(client);
             when(mapper.toResponse(client)).thenReturn(clientResponse);
@@ -103,7 +104,7 @@ class ClientServiceTest {
             assertEquals(clientRequest.name(), result.name());
             
             verify(companyRepository).findById(companyId);
-            verify(repository).existsByCpfAndCompanyId(clientRequest.cpf(), companyId);
+            verify(repository).existsByCpfAndCompanyId(new Cpf(clientRequest.cpf()), companyId);
             verify(repository).save(client);
         }
 
@@ -120,7 +121,7 @@ class ClientServiceTest {
 
             assertEquals("Empresa não encontrada.", exception.getMessage());
             verify(companyRepository).findById(companyId);
-            verify(repository, never()).existsByCpfAndCompanyId(anyString(), any(UUID.class));
+            verify(repository, never()).existsByCpfAndCompanyId(any(Cpf.class), any(UUID.class));
             verify(repository, never()).save(any(Client.class));
         }
 
@@ -129,7 +130,7 @@ class ClientServiceTest {
         void createClientFailCpfAlreadyExists() {
             // Arrange
             when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
-            when(repository.existsByCpfAndCompanyId(clientRequest.cpf(), companyId)).thenReturn(true);
+            when(repository.existsByCpfAndCompanyId(new Cpf(clientRequest.cpf()), companyId)).thenReturn(true);
 
             // Act & Assert
             BusinessException exception = assertThrows(BusinessException.class, () ->
@@ -138,7 +139,7 @@ class ClientServiceTest {
 
             assertEquals("Já existe um cliente cadastrado com este CPF nesta empresa.", exception.getMessage());
             verify(companyRepository).findById(companyId);
-            verify(repository).existsByCpfAndCompanyId(clientRequest.cpf(), companyId);
+            verify(repository).existsByCpfAndCompanyId(new Cpf(clientRequest.cpf()), companyId);
             verify(repository, never()).save(any(Client.class));
         }
     }
@@ -217,7 +218,7 @@ class ClientServiceTest {
             // Arrange
             ClientRequest updateRequest = new ClientRequest(
                     "João Silva Alterado",
-                    "12345678909",
+                    "01234567890",
                     "11988888888",
                     ClientType.AVULSO
             );
@@ -225,7 +226,7 @@ class ClientServiceTest {
             Client updatedClient = Client.builder()
                     .id(clientId)
                     .name(updateRequest.name())
-                    .cpf(updateRequest.cpf())
+                    .cpf(new Cpf("01234567890"))
                     .phone(updateRequest.phone())
                     .type(updateRequest.type())
                     .company(company)
@@ -278,13 +279,13 @@ class ClientServiceTest {
             // Arrange
             ClientRequest updateRequest = new ClientRequest(
                     "Outro Nome",
-                    "98765432109", // CPF alterado, que pertence a outro cliente
+                    "98765432100", // CPF alterado, que pertence a outro cliente
                     "11988888888",
                     ClientType.AVULSO
             );
 
             when(repository.findByIdAndCompanyId(clientId, companyId)).thenReturn(Optional.of(client));
-            when(repository.existsByCpfAndCompanyId(updateRequest.cpf(), companyId)).thenReturn(true);
+            when(repository.existsByCpfAndCompanyId(new Cpf(updateRequest.cpf()), companyId)).thenReturn(true);
 
             // Act & Assert
             BusinessException exception = assertThrows(BusinessException.class, () ->
@@ -293,7 +294,7 @@ class ClientServiceTest {
 
             assertEquals("Já existe outro cliente cadastrado com este CPF nesta empresa.", exception.getMessage());
             verify(repository).findByIdAndCompanyId(clientId, companyId);
-            verify(repository).existsByCpfAndCompanyId(updateRequest.cpf(), companyId);
+            verify(repository).existsByCpfAndCompanyId(new Cpf(updateRequest.cpf()), companyId);
             verify(repository, never()).save(any(Client.class));
         }
     }

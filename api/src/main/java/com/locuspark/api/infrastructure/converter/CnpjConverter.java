@@ -1,6 +1,6 @@
 package com.locuspark.api.infrastructure.converter;
 
-import com.locuspark.api.domain.Cnpj;
+import com.locuspark.api.types.Cnpj;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

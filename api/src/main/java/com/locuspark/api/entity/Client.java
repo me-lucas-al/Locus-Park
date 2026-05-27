@@ -1,5 +1,6 @@
 package com.locuspark.api.entity;
 
+import com.locuspark.api.types.Cpf;
 import com.locuspark.api.enums.ClientType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +24,7 @@ public class Client {
     private String name;
 
     @Column(nullable = false, length = 11)
-    private String cpf;
+    private Cpf cpf;
 
     @Column(nullable = false)
     private String phone;

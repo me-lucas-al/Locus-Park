@@ -1,6 +1,6 @@
 package com.locuspark.api.service;
 
-import com.locuspark.api.domain.Cnpj;
+import com.locuspark.api.types.Cnpj;
 import com.locuspark.api.dto.request.CompanyRequest;
 import com.locuspark.api.dto.response.CompanyResponse;
 import com.locuspark.api.entity.Company;

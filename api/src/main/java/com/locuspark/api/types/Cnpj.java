@@ -1,4 +1,4 @@
-package com.locuspark.api.domain;
+package com.locuspark.api.types;
 
 import com.locuspark.api.exception.BusinessException;
 import java.util.Objects;

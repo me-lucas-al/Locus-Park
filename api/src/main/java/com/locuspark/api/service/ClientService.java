@@ -1,5 +1,6 @@
 package com.locuspark.api.service;
 
+import com.locuspark.api.types.Cpf;
 import com.locuspark.api.dto.request.ClientRequest;
 import com.locuspark.api.dto.response.ClientResponse;
 import com.locuspark.api.entity.Client;
@@ -29,7 +30,7 @@ public class ClientService {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new BusinessException("Empresa não encontrada."));
 
-        if (clientRepository.existsByCpfAndCompanyId(request.cpf(), companyId)) {
+        if (clientRepository.existsByCpfAndCompanyId(new Cpf(request.cpf()), companyId)) {
             throw new BusinessException("Já existe um cliente cadastrado com este CPF nesta empresa.");
         }
 
@@ -58,14 +59,14 @@ public class ClientService {
         Client client = clientRepository.findByIdAndCompanyId(id, companyId)
                 .orElseThrow(() -> new BusinessException("Cliente não encontrado ou não pertence a esta empresa."));
 
-        if (!client.getCpf().equals(request.cpf()) && clientRepository.existsByCpfAndCompanyId(request.cpf(), companyId)) {
+        if (!client.getCpf().getValue().equals(request.cpf()) && clientRepository.existsByCpfAndCompanyId(new Cpf(request.cpf()), companyId)) {
             throw new BusinessException("Já existe outro cliente cadastrado com este CPF nesta empresa.");
         }
 
         client.setName(request.name());
         client.setPhone(request.phone());
         client.setType(request.type());
-        client.setCpf(request.cpf());
+        client.setCpf(new Cpf(request.cpf()));
 
         Client updatedClient = clientRepository.save(client);
         return clientMapper.toResponse(updatedClient);

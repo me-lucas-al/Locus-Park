@@ -1,6 +1,6 @@
 package com.locuspark.api.entity;
 
-import com.locuspark.api.domain.Cnpj;
+import com.locuspark.api.types.Cnpj;
 import com.locuspark.api.enums.CompanyStatus;
 import jakarta.persistence.*;
 import lombok.*;
