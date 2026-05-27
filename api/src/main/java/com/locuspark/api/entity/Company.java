@@ -1,5 +1,6 @@
 package com.locuspark.api.entity;
 
+import com.locuspark.api.domain.Cnpj;
 import com.locuspark.api.enums.CompanyStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,7 +27,7 @@ public class Company {
     private String name;
 
     @Column(nullable = false, unique = true, length = 14)
-    private String cnpj;
+    private Cnpj cnpj;
 
     @Column(name = "total_spots", nullable = false)
     private Integer totalSpots;

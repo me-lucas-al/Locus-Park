@@ -1,5 +1,6 @@
 package com.locuspark.api.service;
 
+import com.locuspark.api.domain.Cnpj;
 import com.locuspark.api.dto.request.CompanyRequest;
 import com.locuspark.api.dto.response.CompanyResponse;
 import com.locuspark.api.entity.Company;
@@ -25,7 +26,7 @@ public class CompanyService {
     @Transactional
     public CompanyResponse createCompany(CompanyRequest request) {
         // Validação de duplicidade usando o método do repository existente
-        if (companyRepository.existsByCnpj(request.cnpj())) {
+        if (companyRepository.existsByCnpj(new Cnpj(request.cnpj()))) {
             throw new BusinessException("Já existe uma empresa cadastrada com este CNPJ.");
         }
 
@@ -59,8 +60,9 @@ public class CompanyService {
 
         // Validação complexa de CNPJ: Se o CNPJ enviado já existir em OUTRA empresa, lança erro
         // Para isso funcionar perfeitamente, adicione o método Optional<Company> findByCnpj(String cnpj) no seu CompanyRepository
+        Cnpj requestCnpj = new Cnpj(request.cnpj());
         companyRepository.findAll().stream()
-                .filter(c -> c.getCnpj().equals(request.cnpj()) && !c.getId().equals(id))
+                .filter(c -> c.getCnpj().equals(requestCnpj) && !c.getId().equals(id))
                 .findFirst()
                 .ifPresent(c -> {
                     throw new BusinessException("Este CNPJ já está sendo utilizado por outra empresa.");
@@ -72,7 +74,7 @@ public class CompanyService {
 
         // Atualiza os dados da entidade existente utilizando os dados do Request
         company.setName(request.name());
-        company.setCnpj(request.cnpj());
+        company.setCnpj(new Cnpj(request.cnpj()));
         company.setTotalSpots(request.totalSpots());
 
         Company updatedCompany = companyRepository.save(company);

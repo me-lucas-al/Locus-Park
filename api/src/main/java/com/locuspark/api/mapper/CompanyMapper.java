@@ -1,5 +1,6 @@
 package com.locuspark.api.mapper;
 
+import com.locuspark.api.domain.Cnpj;
 import com.locuspark.api.dto.request.CompanyRequest;
 import com.locuspark.api.dto.response.CompanyResponse;
 import com.locuspark.api.entity.Company;
@@ -17,4 +18,12 @@ public interface CompanyMapper {
     Company toEntity(CompanyRequest request);
 
     CompanyResponse toResponse(Company company);
+
+    default Cnpj map(String value) {
+        return value != null ? new Cnpj(value) : null;
+    }
+
+    default String map(Cnpj cnpj) {
+        return cnpj != null ? cnpj.getValue() : null;
+    }
 }
