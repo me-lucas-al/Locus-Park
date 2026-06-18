@@ -30,22 +30,51 @@ public class UserService {
 
     @Transactional
     public UserResponse registerUser(RegisterRequest request) {
-        // Valida se o username já existe (mantendo a regra do seu AuthController original)
+        // 1. Valida se o username já existe
         if (userRepository.findByUsername(request.username()) != null) {
             throw new BusinessException("O usuário '" + request.username() + "' já existe.");
         }
 
-        // Busca a empresa para garantir o vínculo correto do Multi-Tenant
-        Company company = companyRepository.findById(request.companyId())
-                .orElseThrow(() -> new BusinessException("Empresa não encontrada com o ID fornecido."));
+        // 2. Determina a Role (Padrão pública: EMPLOYEE. Se você implementar uma rota restrita para SA, pode vir no request)
+        // Como o seu RegisterRequest atual não envia role, assume EMPLOYEE para cadastros comuns.
+        UserRole targetRole = UserRole.EMPLOYEE;
 
-        // Converte o DTO para Entidade
+        Company company = null;
+
+        // 3. REGRA DE OURO DO MULTI-TENANT:
+        // Se NÃO for SUPER_ADMIN, o vínculo com a empresa torna-se estritamente OBRIGATÓRIO no service
+        if (targetRole != UserRole.SUPER_ADMIN) {
+            if (request.companyId() == null) {
+                throw new BusinessException("O ID da empresa é obrigatório.");
+            }
+            company = companyRepository.findById(request.companyId())
+                    .orElseThrow(() -> new BusinessException("Empresa não encontrada com o ID fornecido."));
+        }
+
+        // 4. Converte o DTO para Entidade utilizando o MapStruct
         User user = userMapper.toEntity(request);
 
-        // Aplica as regras de segurança e de negócio fixas no servidor
+        // 5. Aplica as credenciais, papéis e o tenant determinado acima
         user.setPassword(passwordEncoder.encode(request.password()));
-        user.setRole(UserRole.EMPLOYEE); // Padrão imutável pelo frontend: Funcionário
-        user.setCompany(company);
+        user.setRole(targetRole);
+        user.setCompany(company); // Fica nulo se, e somente se, for SUPER_ADMIN
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toResponse(savedUser);
+    }
+
+    // Método alternativo exclusivo para criar o primeiro SUPER_ADMIN do sistema (via Script, Seeder ou Rota Privada)
+    @Transactional
+    public UserResponse registerSuperAdmin(String username, String password) {
+        if (userRepository.findByUsername(username) != null) {
+            throw new BusinessException("O usuário '" + username + "' já existe.");
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole(UserRole.SUPER_ADMIN);
+        user.setCompany(null); // Explicitamente sem empresa
 
         User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
