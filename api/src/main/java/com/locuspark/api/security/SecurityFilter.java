@@ -38,6 +38,14 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             var token = this.recoverToken(request);
+            String path = request.getRequestURI();
+
+            boolean isPublic = path.equals("/auth/login") || path.equals("/auth/register") ||
+                    path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui");
+
+            if (token == null && !isPublic) {
+                throw new TokenMissingException("Token não fornecido ou cabeçalho Authorization ausente.");
+            }
 
             if (token != null) {
                 var username = tokenService.validateToken(token); // O username é pego aqui

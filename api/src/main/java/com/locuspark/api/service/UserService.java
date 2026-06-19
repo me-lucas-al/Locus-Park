@@ -1,12 +1,14 @@
 package com.locuspark.api.service;
 
 import com.locuspark.api.dto.request.RegisterRequest;
+import com.locuspark.api.dto.request.RoleUpdateRequest;
 import com.locuspark.api.dto.request.UserUpdateRequest;
 import com.locuspark.api.dto.response.UserResponse;
 import com.locuspark.api.entity.Company;
 import com.locuspark.api.entity.User;
 import com.locuspark.api.enums.UserRole;
 import com.locuspark.api.exception.BusinessException;
+import com.locuspark.api.exception.UserNotFoundException;
 import com.locuspark.api.mapper.UserMapper;
 import com.locuspark.api.repository.UserRepository;
 import com.locuspark.api.repository.CompanyRepository;
@@ -108,5 +110,53 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Usuário não encontrado."));
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public UserResponse updateUserRole(UUID targetUserId, RoleUpdateRequest request, User currentUser) {
+        // Passo A: Buscar o usuário alvo (targetUserId) no userRepository. Lançar BusinessException se não existir.
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new BusinessException("Usuário não encontrado."));
+
+        // Passo B: Validar as permissões do currentUser
+        UserRole currentRole = currentUser.getRole();
+
+        if (currentRole == UserRole.EMPLOYEE) {
+            throw new BusinessException("Acesso negado: Funcionários não podem gerenciar usuários.");
+        }
+
+        if (currentRole == UserRole.ADMIN) {
+            // O usuário alvo deve pertencer à MESMA empresa do ADMIN
+            if (currentUser.getCompany() == null || targetUser.getCompany() == null ||
+                    !targetUser.getCompany().getId().equals(currentUser.getCompany().getId())) {
+                throw new BusinessException("Acesso negado: Este usuário pertence a outro pátio.");
+            }
+
+            // O ADMIN não pode promover ninguém a SUPER_ADMIN
+            if (request.role() == UserRole.SUPER_ADMIN) {
+                throw new BusinessException("Acesso negado: Não é permitido promover usuários a SUPER_ADMIN neste escopo.");
+            }
+        }
+
+        if (currentRole == UserRole.SUPER_ADMIN) {
+            // Regra Especial Contextual: se o SUPER_ADMIN possui uma empresa vinculada
+            if (currentUser.getCompany() != null) {
+                // só altera usuários da sua própria empresa
+                if (targetUser.getCompany() == null ||
+                        !targetUser.getCompany().getId().equals(currentUser.getCompany().getId())) {
+                    throw new BusinessException("Acesso negado: Este usuário pertence a outro pátio.");
+                }
+
+                // não pode criar/gerenciar outros SuperAdmins (não pode promover a SUPER_ADMIN)
+                if (request.role() == UserRole.SUPER_ADMIN) {
+                    throw new BusinessException("Acesso negado: Não é permitido promover usuários a SUPER_ADMIN neste escopo.");
+                }
+            }
+        }
+
+        // Passo C: Atualizar a role do targetUser, salvar no repositório e retornar o UserResponse via mapper.
+        targetUser.setRole(request.role());
+        User savedUser = userRepository.save(targetUser);
+        return userMapper.toResponse(savedUser);
     }
 }
