@@ -31,6 +31,35 @@ A aplicação utiliza uma arquitetura totalmente desacoplada, dividida em duas b
     * *Gatilhos de Diária*: Conversão automática do valor acumulado por horas em diária cheia para beneficiar o cliente.
     * *Convênios e Selos*: Parcerias com o comércio local aplicando descontos fixos, porcentagens ou abono de horas.
 
+## 🧠 Conceitos Arquiteturais e Boas Práticas Aplicados
+
+* *Value Objects (VOs)*: Encapsulamento de regras e validações estritas de negócio direto em tipos complexos customizados na camada global types, como Cpf, Cnpj e Plate (Placa com validação automática para os formatos Tradicional e Mercosul).
+* *Segurança Programática Cruzada*: Validação no backend que impede que usuários EMPLOYEE alterem perfis, ou que um ADMIN manipule dados ou mude papéis de usuários pertencentes a outros pátios.
+* *TDD Avançado*: Suíte de testes unitários e de integração integrando MockMvc e Mockito com banco de dados H2 em memória, garantindo rollback automático a cada execução de teste.
+
+## 📂 Estrutura das Branches
+
+O projeto está dividido de forma isolada através de branches do Git:
+
+### Branch: backend
+
+```text
+api/src/main/java/com/locuspark/api/
+├── config/                  # Configurações de segurança e cors
+├── controller/              # Endpoints HTTP REST (MockMvc tested)
+├── dto/                     # Records rígidos de Request e Response
+├── entity/                  # Modelos JPA mapeados para o banco de dados
+├── enums/                   # Controle de papéis (UserRole) e status
+├── exception/               # Handler global de exceções da API
+├── infrastructure/          # Conversores JPA customizados para os VOs
+├── mapper/                  # Interfaces MapStruct deAlice conversão rápida
+├── repository/              # Camada de persistência Spring Data
+├── security/                # Filtros de interceptação de tokens JWT
+└── types/                   # Value Objects de domínio (Cpf, Cnpj, Plate)
+```
+
+---
+
 ### 🔵 Rodando o Frontend (Painel Angular)
 
 1. *Abra outro terminal e mude para a branch frontend:*
