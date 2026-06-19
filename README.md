@@ -86,23 +86,23 @@ src/app/
 ### 🟢 Rodando o Backend (API)
 
 1. *Abra o terminal e mude para a branch backend:*
-    bash
+    ```bash
     git checkout backend
-    
+    ```
 2. *Navegue até a pasta da API:*
-    bash
+     ```bash
     cd api
-    
+    ```
 3. *Configure as credenciais locais:*
     * Renomeie ou configure o arquivo src/main/resources/application-local.properties com as credenciais do seu banco MySQL/PostgreSQL local.
 4. *Execute a suíte de testes automatizados (Garante a integridade do código):*
-    bash
+    ```bash
     ./mvnw clean test
-    
+    ```
 5. *Suba a aplicação localmente:*
-    bash
+    ```bash
     ./mvnw spring-boot:run
-    
+    ```
     * A API estará respondendo em: http://localhost:8080
 
 ---
@@ -110,17 +110,17 @@ src/app/
 ### 🔵 Rodando o Frontend (Painel Angular)
 
 1. *Abra outro terminal e mude para a branch frontend:*
-    bash
+    ```bash
     git checkout frontend
-    
+    ```
 2. *Instale todas as dependências do projeto:*
-    bash
+    ```bash
     npm install
-    
+    ```
 3. *Execute o servidor de desenvolvimento do Angular:*
-    bash
+   ```bash
     ng serve
-    
+    ```
 4. *Acesse a aplicação no seu navegador:*
     * Abra a URL: http://localhost:4200
 
