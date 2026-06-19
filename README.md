@@ -31,4 +31,45 @@ A aplicação utiliza uma arquitetura totalmente desacoplada, dividida em duas b
     * *Gatilhos de Diária*: Conversão automática do valor acumulado por horas em diária cheia para beneficiar o cliente.
     * *Convênios e Selos*: Parcerias com o comércio local aplicando descontos fixos, porcentagens ou abono de horas.
 
+### 🔵 Rodando o Frontend (Painel Angular)
+
+1. *Abra outro terminal e mude para a branch frontend:*
+    bash
+    git checkout frontend
+    
+2. *Instale todas as dependências do projeto:*
+    bash
+    npm install
+    
+3. *Execute o servidor de desenvolvimento do Angular:*
+    bash
+    ng serve
+    
+4. *Acesse a aplicação no seu navegador:*
+    * Abra a URL: http://localhost:4200
+
+---
+
+## 🖼️ Fluxo Operacional (Exemplo de Uso da API)
+
+*1. Registro de Entrada de Veículo (Rotativo):*
+* *Endpoint*: POST /tickets/check-in
+* *Payload enviado pelo Frontend:*
+json
+{
+  "plate": "ABC1D23",
+  "model": "Honda Civic",
+  "color": "Preto"
+}
+
+* *Resposta segura da API (201 Created):*
+
+```json
+{
+  "ticketId": "a8527b7d-b6a8-4c3e-89a7-9f1e1cb027fb",
+  "plate": "ABC1D23",
+  "enteredAt": "2026-06-18T14:46:35",
+  "status": "ACTIVE",
+  "companyId": "7359c468-4a16-46ad-b914-2c68d7a120db"
+}
 ---
