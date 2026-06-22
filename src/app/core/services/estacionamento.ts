@@ -4,7 +4,7 @@ import { Vaga } from '../models/vaga';
 import { RegistroEstacionamento } from '../models/registro-estacionamento';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EstacionamentoService {
   private totalVagas = 50;
@@ -18,25 +18,25 @@ export class EstacionamentoService {
       cor: 'Preto',
       vaga: 12,
       entrada: new Date(new Date().setHours(8, 30, 0, 0)),
-      status: 'Aberto'
+      status: 'Aberto',
     },
     {
       id: 2,
       placa: 'XYZ-5678',
-      modelo: 'Toyota Corolla',
+      modelo: 'Corolla',
       cor: 'Branco',
       vaga: 5,
       entrada: new Date(new Date().setHours(9, 15, 0, 0)),
-      status: 'Aberto'
+      status: 'Aberto',
     },
     {
       id: 3,
       placa: 'DEF-9012',
-      modelo: 'Volkswagen Gol',
+      modelo: 'Gol',
       cor: 'Prata',
       vaga: 23,
       entrada: new Date(new Date().setHours(10, 0, 0, 0)),
-      status: 'Aberto'
+      status: 'Aberto',
     },
     {
       id: 4,
@@ -48,21 +48,21 @@ export class EstacionamentoService {
       saida: new Date(new Date().setHours(9, 20, 0, 0)),
       tempoTotalMinutos: 140,
       valorTotal: 24,
-      status: 'Finalizado'
-    }
+      status: 'Finalizado',
+    },
   ];
 
   listarVeiculos(): VeiculoEstacionado[] {
     return this.registros
-      .filter(registro => registro.status === 'Aberto')
-      .map(registro => ({
+      .filter((registro) => registro.status === 'Aberto')
+      .map((registro) => ({
         id: registro.id,
         placa: registro.placa,
         modelo: registro.modelo,
         cor: registro.cor,
         horarioEntrada: registro.entrada,
         vaga: registro.vaga,
-        status: 'Ativo'
+        status: 'Ativo',
       }));
   }
 
@@ -73,16 +73,30 @@ export class EstacionamentoService {
   listarVagas(): Vaga[] {
     const vagas: Vaga[] = [];
 
-    for (let i = 1; i <= this.totalVagas; i++) {
-      const ocupada = this.registros.some(
-        registro => registro.vaga === i && registro.status === 'Aberto'
+    for (let numero = 1; numero <= this.totalVagas; numero++) {
+      const registroAtivo = this.registros.find(
+        (registro) => registro.vaga === numero && registro.status === 'Aberto',
       );
 
-      vagas.push({
-        id: i,
-        numero: i,
-        status: ocupada ? 'Ocupada' : 'Livre'
-      });
+      if (registroAtivo) {
+        vagas.push({
+          id: numero,
+          numero,
+
+          status: 'Ocupada',
+
+          placa: registroAtivo.placa,
+          modelo: registroAtivo.modelo,
+          cor: registroAtivo.cor,
+          horarioEntrada: registroAtivo.entrada,
+        });
+      } else {
+        vagas.push({
+          id: numero,
+          numero,
+          status: 'Livre',
+        });
+      }
     }
 
     return vagas;
@@ -93,7 +107,11 @@ export class EstacionamentoService {
   }
 
   getVagasOcupadas(): number {
-    return this.registros.filter(registro => registro.status === 'Aberto').length;
+    return this.registros.filter((registro) => registro.status === 'Aberto').length;
+  }
+
+  getVagasOcupadasDetalhadas(): Vaga[] {
+    return this.listarVagas().filter((vaga) => vaga.status === 'Ocupada');
   }
 
   getVagasLivres(): number {
@@ -101,16 +119,21 @@ export class EstacionamentoService {
   }
 
   getTotalVeiculosHoje(): number {
-    return this.registros.filter(registro => this.dataHoje(registro.entrada)).length;
+    return this.registros.filter((registro) => this.dataHoje(registro.entrada)).length;
   }
 
   getFaturamentoDiario(): number {
     return this.registros
-      .filter(registro => registro.status === 'Finalizado' && registro.saida && this.dataHoje(registro.saida))
+      .filter(
+        (registro) =>
+          registro.status === 'Finalizado' && registro.saida && this.dataHoje(registro.saida),
+      )
       .reduce((total, registro) => total + (registro.valorTotal ?? 0), 0);
   }
 
-  registrarEntrada(novoVeiculo: Omit<VeiculoEstacionado, 'id' | 'horarioEntrada' | 'status'>): void {
+  registrarEntrada(
+    novoVeiculo: Omit<VeiculoEstacionado, 'id' | 'horarioEntrada' | 'status'>,
+  ): void {
     const registro: RegistroEstacionamento = {
       id: this.gerarNovoId(),
       placa: novoVeiculo.placa,
@@ -118,14 +141,14 @@ export class EstacionamentoService {
       cor: novoVeiculo.cor,
       vaga: novoVeiculo.vaga,
       entrada: new Date(),
-      status: 'Aberto'
+      status: 'Aberto',
     };
 
     this.registros.push(registro);
   }
 
   registrarSaida(id: number): void {
-    const registro = this.registros.find(item => item.id === id && item.status === 'Aberto');
+    const registro = this.registros.find((item) => item.id === id && item.status === 'Aberto');
 
     if (!registro) {
       return;
@@ -163,7 +186,7 @@ export class EstacionamentoService {
       return 1;
     }
 
-    return Math.max(...this.registros.map(registro => registro.id)) + 1;
+    return Math.max(...this.registros.map((registro) => registro.id)) + 1;
   }
 
   private dataHoje(data: Date): boolean {

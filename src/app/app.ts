@@ -1,13 +1,22 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Dashboard } from "./pages/dashboard/dashboard";
+import { CommonModule } from '@angular/common';
+import { Router, RouterOutlet } from '@angular/router';
+import { Sidebar } from './layout/sidebar/sidebar';
 
 @Component({
   selector: 'app-root',
-  imports: [ RouterOutlet],
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, Sidebar],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   protected readonly title = signal('locus-park-front');
+
+  constructor(private router: Router) {}
+
+  isAuthRoute(): boolean {
+    const url = this.router.url;
+    return url.startsWith('/login') || url.startsWith('/cadastro');
+  }
 }

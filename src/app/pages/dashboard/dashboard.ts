@@ -4,19 +4,21 @@ import { FormsModule } from '@angular/forms';
 import { EstacionamentoService } from '../../core/services/estacionamento';
 import { VeiculoEstacionado } from '../../core/models/veiculo-estacionado';
 import { Vaga } from '../../core/models/vaga';
+import { ModalEntrada } from '../../shared/components/modal-entrada/modal-entrada';
+import { ModalSaida } from '../../shared/components/modal-saida/modal-saida';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ModalEntrada, ModalSaida],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
   veiculos: VeiculoEstacionado[] = [];
   vagasDisponiveis: Vaga[] = [];
-
-  termoBusca = '';
+  todasVagas: Vaga[] = [];
+  vagasEmUso: Vaga[] = [];
 
   vagasLivres = 0;
   vagasOcupadas = 0;
@@ -32,7 +34,7 @@ export class Dashboard implements OnInit {
     placa: '',
     modelo: '',
     cor: '',
-    vaga: 0
+    vaga: 0,
   };
 
   constructor(private estacionamentoService: EstacionamentoService) {}
@@ -43,11 +45,11 @@ export class Dashboard implements OnInit {
 
   formatarDataAtual(): string {
     const data = new Date();
-
     return data.toLocaleDateString('pt-BR', {
+      weekday: 'long',
       day: '2-digit',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     });
   }
 
@@ -61,21 +63,13 @@ export class Dashboard implements OnInit {
 
     this.vagasDisponiveis = this.estacionamentoService
       .listarVagas()
-      .filter(vaga => vaga.status === 'Livre');
+      .filter((vaga) => vaga.status === 'Livre');
+
+    this.todasVagas = this.estacionamentoService.listarVagas();
+    this.vagasEmUso = this.estacionamentoService.getVagasOcupadasDetalhadas();
   }
 
-  get veiculosFiltrados(): VeiculoEstacionado[] {
-    const busca = this.termoBusca.trim().toLowerCase();
-
-    if (!busca) {
-      return this.veiculos;
-    }
-
-    return this.veiculos.filter(veiculo =>
-      veiculo.placa.toLowerCase().includes(busca) ||
-      veiculo.modelo.toLowerCase().includes(busca)
-    );
-  }
+  // ----- Modal de Entrada -----
 
   abrirModalEntrada(): void {
     this.limparFormularioEntrada();
@@ -100,7 +94,7 @@ export class Dashboard implements OnInit {
       placa: this.novaEntrada.placa.toUpperCase(),
       modelo: this.novaEntrada.modelo,
       cor: this.novaEntrada.cor,
-      vaga: Number(this.novaEntrada.vaga)
+      vaga: Number(this.novaEntrada.vaga),
     });
 
     this.fecharModalEntrada();
@@ -108,14 +102,22 @@ export class Dashboard implements OnInit {
   }
 
   limparFormularioEntrada(): void {
-    this.novaEntrada = {
-      placa: '',
-      modelo: '',
-      cor: '',
-      vaga: 0
-    };
+    this.novaEntrada = { placa: '', modelo: '', cor: '', vaga: 0 };
   }
 
+  // ----- Modal de Saída -----
+
+  /** Abre o modal de saída a partir do botão "Liberar" na lista de vagas ocupadas */
+  abrirModalSaidaPorVaga(vaga: Vaga): void {
+    // Busca o VeiculoEstacionado correspondente à vaga
+    const veiculo = this.veiculos.find((v) => v.vaga === vaga.numero);
+    if (veiculo) {
+      this.veiculoSelecionado = veiculo;
+      this.modalSaidaAberto = true;
+    }
+  }
+
+  /** Abre o modal de saída diretamente com um VeiculoEstacionado */
   abrirModalSaida(veiculo: VeiculoEstacionado): void {
     this.veiculoSelecionado = veiculo;
     this.modalSaidaAberto = true;
@@ -127,26 +129,18 @@ export class Dashboard implements OnInit {
   }
 
   registrarSaida(): void {
-    if (!this.veiculoSelecionado) {
-      return;
-    }
+    if (!this.veiculoSelecionado) return;
 
     this.estacionamentoService.registrarSaida(this.veiculoSelecionado.id);
     this.fecharModalSaida();
     this.carregarDados();
   }
 
-  formatarHorario(data: Date): string {
-    return new Date(data).toLocaleTimeString('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
+  // ----- Cálculos -----
 
   calcularTempo(dataEntrada: Date): string {
     const entrada = new Date(dataEntrada).getTime();
     const agora = new Date().getTime();
-
     const diferencaMinutos = Math.floor((agora - entrada) / 1000 / 60);
 
     const horas = Math.floor(diferencaMinutos / 60);
