@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/configurations")
+@RequestMapping("/api/configurations")
 public class ConfigurationController {
 
     private final ConfigurationService configurationService;
