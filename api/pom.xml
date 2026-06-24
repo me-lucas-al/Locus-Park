@@ -203,7 +203,7 @@
 				<artifactId>flyway-maven-plugin</artifactId>
 				<version>10.20.1</version>
 				<configuration>
-					<url>jdbc:mysql://${env.TIDB_HOST}:4000/locuspark?sslMode=VERIFY_IDENTITY</url>
+					<url>jdbc:mysql://${env.TIDB_HOST}:4000/locusParkDB?sslMode=VERIFY_IDENTITY</url>
 					<user>${env.TIDB_USER}</user>
 					<password>${env.TIDB_PASS}</password>
 					<locations>
