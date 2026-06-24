@@ -4,17 +4,13 @@ Description: AWS SAM template para implantação do backend do LocusPark com Sna
 
 Parameters:
   DbUrlParam:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /locuspark/prod/DB_URL
+    Type: String  # ✅ String simples — valor vem do pipeline via --parameter-overrides
   DbUserParam:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /locuspark/prod/DB_USER
+    Type: String
   DbPassParam:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /locuspark/prod/DB_PASS
+    Type: String
   ApiSecretParam:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /locuspark/prod/API_SECURITY_TOKEN_SECRET
+    Type: String
 
 Globals:
   Function:
