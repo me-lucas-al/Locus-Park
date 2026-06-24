@@ -46,9 +46,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Run SAM Build
-        run: sam build
-
       - name: Deploy Framework to AWS Serverless Application Model
         run: |
           sam deploy \
