@@ -16,6 +16,7 @@ Globals:
         DB_URL: '{{resolve:ssm:/locuspark/prod/DB_URL}}'
         DB_USER: '{{resolve:ssm:/locuspark/prod/DB_USER}}'
         DB_PASS: '{{resolve:ssm:/locuspark/prod/DB_PASS}}'
+        API_SECURITY_TOKEN_SECRET: '{{resolve:ssm:/locuspark/prod/API_SECURITY_TOKEN_SECRET}}'
 
 Resources:
   LocusParkAPI:

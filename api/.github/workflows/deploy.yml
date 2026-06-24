@@ -26,6 +26,13 @@ jobs:
       - name: Build Project and Run All Verified Tests
         run: ./mvnw clean package
 
+      - name: Run Database Migrations (TiDB Cloud)
+        run: ./mvnw flyway:migrate
+        env:
+          TIDB_HOST: ${{ secrets.TIDB_HOST }}
+          TIDB_USER: ${{ secrets.TIDB_USER }}
+          TIDB_PASS: ${{ secrets.TIDB_PASS }}
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
