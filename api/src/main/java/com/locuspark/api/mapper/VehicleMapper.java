@@ -6,6 +6,7 @@ import com.locuspark.api.entity.Vehicle;
 import com.locuspark.api.types.Plate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
@@ -19,6 +20,15 @@ public interface VehicleMapper {
     @Mapping(target = "companyId", source = "company.id")
     @Mapping(target = "clientId", source = "client.id")
     VehicleResponse toResponse(Vehicle vehicle);
+
+    /**
+     * Atualiza a entidade existente com os dados vindos do request.
+     * Ignoramos id, company e client porque o tratamento deles é feito de forma isolada no Service.
+     */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "company", ignore = true)
+    @Mapping(target = "client", ignore = true)
+    void updateEntityFromDto(VehicleRequest request, @MappingTarget Vehicle vehicle);
 
     default Plate map(String value) {
         return value != null ? new Plate(value) : null;

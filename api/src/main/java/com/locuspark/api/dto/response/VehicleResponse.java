@@ -1,5 +1,7 @@
 package com.locuspark.api.dto.response;
 
+import com.locuspark.api.enums.VehicleType;
+
 import java.util.UUID;
 
 public record VehicleResponse(
@@ -7,6 +9,7 @@ public record VehicleResponse(
         String plate,
         String model,
         String color,
+        VehicleType type,
         UUID clientId,
         UUID companyId
 ) {}

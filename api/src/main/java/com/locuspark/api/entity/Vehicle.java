@@ -1,5 +1,6 @@
 package com.locuspark.api.entity;
 
+import com.locuspark.api.enums.VehicleType;
 import com.locuspark.api.types.Plate;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,6 +35,10 @@ public class Vehicle {
     @ManyToOne(optional = false)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private VehicleType type;
 
     @ManyToOne
     @JoinColumn(name = "client_id")

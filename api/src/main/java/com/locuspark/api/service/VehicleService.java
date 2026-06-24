@@ -64,4 +64,42 @@ public class VehicleService {
                 .orElseThrow(() -> new BusinessException("Veículo não encontrado ou não pertence a esta empresa."));
         return vehicleMapper.toResponse(vehicle);
     }
+    @Transactional
+    public VehicleResponse updateVehicle(UUID id, UUID companyId, VehicleRequest request) {
+        // Garante que o veículo pertence à empresa antes de atualizar
+        Vehicle vehicle = vehicleRepository.findByIdAndCompanyId(id, companyId)
+                .orElseThrow(() -> new BusinessException("Veículo não encontrado ou não pertence a esta empresa."));
+
+        // Se a placa mudou, checa se a nova já não está em uso por outro carro da mesma empresa
+        Plate newPlate = new Plate(request.plate());
+        if (!vehicle.getPlate().equals(newPlate) && vehicleRepository.existsByPlateAndCompanyId(newPlate, companyId)) {
+            throw new BusinessException("Já existe um veículo cadastrado com esta placa nesta empresa.");
+        }
+
+        // Atualiza o vínculo do cliente, se houver
+        Client client = null;
+        if (request.clientId() != null) {
+            client = clientRepository.findByIdAndCompanyId(request.clientId(), companyId)
+                    .orElseThrow(() -> new BusinessException("Cliente não encontrado ou não pertence a esta empresa."));
+        }
+
+        // Atualiza os dados da entidade
+        vehicle.setPlate(newPlate);
+        vehicle.setModel(request.model());
+        vehicle.setColor(request.color());
+        vehicle.setType(request.type()); // ex: CAR, MOTORCYCLE, se houver Enums
+        vehicle.setClient(client);
+
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+        return vehicleMapper.toResponse(updatedVehicle);
+    }
+
+    @Transactional
+    public void deleteVehicle(UUID id, UUID companyId) {
+        // Garante o isolamento: só deleta se for da empresa correta
+        Vehicle vehicle = vehicleRepository.findByIdAndCompanyId(id, companyId)
+                .orElseThrow(() -> new BusinessException("Veículo não encontrado ou não pertence a esta empresa."));
+
+        vehicleRepository.delete(vehicle);
+    }
 }
