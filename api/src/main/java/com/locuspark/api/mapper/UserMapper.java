@@ -19,6 +19,7 @@ public interface UserMapper {
     User toEntity(RegisterRequest request);
 
     @Mapping(target = "companyId", source = "company.id")
+    @Mapping(target = "authorities", ignore = true)
     UserResponse toResponse(User user);
 
     @Mapping(target = "id", ignore = true)
