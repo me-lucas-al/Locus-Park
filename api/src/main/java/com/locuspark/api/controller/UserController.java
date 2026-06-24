@@ -1,5 +1,6 @@
 package com.locuspark.api.controller;
 
+import com.locuspark.api.dto.request.RegisterRequest;
 import com.locuspark.api.dto.request.RoleUpdateRequest;
 import com.locuspark.api.dto.request.UserUpdateRequest;
 import com.locuspark.api.dto.response.UserResponse;
@@ -9,6 +10,7 @@ import com.locuspark.api.mapper.UserMapper;
 import com.locuspark.api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,16 @@ public class UserController {
         }
         // Retorna o DTO completo, incluindo o companyId mapeado pelo MapStruct
         return ResponseEntity.ok(userMapper.toResponse(user));
+    }
+
+    @PostMapping("/company/{companyId}")
+    public ResponseEntity<UserResponse> createNewCollaborator(
+            @PathVariable UUID companyId,
+            @RequestBody @Valid RegisterRequest request) {
+
+        RegisterRequest localizedRequest = new RegisterRequest(request.username(), request.password(), companyId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(localizedRequest));
     }
 
     @GetMapping("/company/{companyId}")

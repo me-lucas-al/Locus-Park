@@ -31,6 +31,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        // Dentro de HttpSecurity.authorizeHttpRequests:
+                        .requestMatchers(HttpMethod.POST, "/users/company/*").hasAnyRole("SUPER_ADMIN", "ADMIN")
 
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
