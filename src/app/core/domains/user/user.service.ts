@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
-import { UserUpdateRequest, UserRoleRequest, UserResponse } from './user.types';
+import { UserUpdateRequest, UserRoleRequest, UserResponse, RegisterRequest } from './user.types';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -15,6 +15,10 @@ export class UserService {
 
   getByCompany(companyId: string): Observable<UserResponse[]> {
     return this.http.get<UserResponse[]>(`${this.baseUrl}/company/${companyId}`);
+  }
+
+  createCollaborator(companyId: string, data: RegisterRequest): Observable<UserResponse> {
+    return this.http.post<UserResponse>(`${this.baseUrl}/company/${companyId}`, data);
   }
 
   update(id: string, request: UserUpdateRequest): Observable<UserResponse> {

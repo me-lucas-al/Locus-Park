@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { UserService } from './user.service';
-import { UserUpdateRequest, UserRoleRequest, UserResponse } from './user.types';
+import { UserUpdateRequest, UserRoleRequest, UserResponse, RegisterRequest } from './user.types';
 import { environment } from '@environments/environment';
 
 const BASE = `${environment.apiUrl}users`;
@@ -42,6 +42,16 @@ describe('UserService', () => {
     expect(req.request.method).toBe('GET');
     req.flush([mockUser]);
     expect(await promise).toEqual([mockUser]);
+  });
+
+  it('deve cadastrar um novo colaborador via POST /users/company/{companyId}', async () => {
+    const registerRequest: RegisterRequest = { username: 'colab1', password: 'password123' };
+    const promise = firstValueFrom(service.createCollaborator('c-1', registerRequest));
+    const req = httpMock.expectOne(`${BASE}/company/c-1`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(registerRequest);
+    req.flush(mockUser);
+    expect(await promise).toEqual(mockUser);
   });
 
   it('deve atualizar usuário via PUT com id e payload corretos', async () => {

@@ -2,7 +2,7 @@ import { inject, Signal } from '@angular/core';
 import { injectQuery, injectMutation, QueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { UserService } from './user.service';
-import { UpdateUserParams, UpdateUserRoleParams } from './user.types';
+import { UpdateUserParams, UpdateUserRoleParams, CreateCollaboratorParams } from './user.types';
 
 export function useUserProfileQuery() {
   const service = inject(UserService);
@@ -18,6 +18,16 @@ export function useUsersByCompanyQuery(companyId: Signal<string>) {
     queryKey: ['users', 'company', companyId()] as const,
     queryFn: () => lastValueFrom(service.getByCompany(companyId())),
     enabled: !!companyId(),
+  }));
+}
+
+export function useCreateCollaboratorMutation() {
+  const service = inject(UserService);
+  const queryClient = inject(QueryClient);
+  return injectMutation(() => ({
+    mutationFn: (params: CreateCollaboratorParams) =>
+      lastValueFrom(service.createCollaborator(params.companyId, params.request)),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
   }));
 }
 
