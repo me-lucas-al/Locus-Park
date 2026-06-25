@@ -84,7 +84,7 @@
             </button>
           </div>
 
-          <button type="submit" class="btn-confirmar">
+          <button type="submit" class="btn-confirmar" [appLoading]="isConfirming()" loadingText="Confirmando...">
             Confirmar Entrada
           </button>
         </form>

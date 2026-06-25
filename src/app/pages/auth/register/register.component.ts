@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { useRegisterMutation } from '../../../core/domains/auth/auth.hooks';
 import { ToastService } from '../../../shared/services/toast.service';
+import { LoadingDirective } from '../../../shared/directives/loading.directive';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, LoadingDirective],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -27,7 +28,7 @@ export class Register {
   };
 
   private readonly router = inject(Router);
-  private readonly registerMutation = useRegisterMutation();
+  protected readonly registerMutation = useRegisterMutation();
   private readonly toastService = inject(ToastService);
 
   onCnpjInput(event: Event): void {

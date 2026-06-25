@@ -96,7 +96,7 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-action">Salvar Configurações</button>
+          <button type="submit" class="btn-action" [appLoading]="isSavingTariffs()" loadingText="Salvando...">Salvar Configurações</button>
         </div>
       </form>
     }
@@ -160,7 +160,7 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-action">Salvar Configurações</button>
+          <button type="submit" class="btn-action" [appLoading]="isSavingTariffs()" loadingText="Salvando...">Salvar Configurações</button>
         </div>
       </form>
     }
@@ -207,7 +207,7 @@
               />
             </div>
             <div class="form-field align-end">
-              <button type="submit" class="btn-action btn-add-partnership">+ Cadastrar</button>
+              <button type="submit" class="btn-action btn-add-partnership" [appLoading]="isAddingPartnership()" loadingText="Cadastrando...">+ Cadastrar</button>
             </div>
           </div>
         </form>

@@ -8,10 +8,12 @@ import { AuthService } from '../../../core/domains/auth/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { lastValueFrom } from 'rxjs';
 
+import { LoadingDirective } from '../../../shared/directives/loading.directive';
+
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, LoadingDirective],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -22,7 +24,7 @@ export class Login {
   erroLogin = '';
 
   private readonly router = inject(Router);
-  private readonly loginMutation = useLoginMutation();
+  protected readonly loginMutation = useLoginMutation();
   private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);

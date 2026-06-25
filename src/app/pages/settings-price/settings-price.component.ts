@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -14,10 +14,12 @@ import {
 } from '../../core/domains/partnership/partnership.hooks';
 import { ToastService } from '../../shared/services/toast.service';
 
+import { LoadingDirective } from '../../shared/directives/loading.directive';
+
 @Component({
   selector: 'app-settings-price',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoadingDirective],
   templateUrl: './settings-price.html',
   styleUrl: './settings-price.css',
 })
@@ -29,10 +31,18 @@ export class SettingsPrice {
   protected readonly pricingQuery = usePricingQuery();
   protected readonly partnershipsQuery = usePartnershipsQuery();
 
-  private readonly updateTariffMutation = useUpdateTariffMutation();
-  private readonly updatePricingMutation = useUpdatePricingMutation();
-  private readonly createPartnershipMutation = useCreatePartnershipMutation();
-  private readonly deletePartnershipMutation = useDeletePartnershipMutation();
+  protected readonly updateTariffMutation = useUpdateTariffMutation();
+  protected readonly updatePricingMutation = useUpdatePricingMutation();
+  protected readonly createPartnershipMutation = useCreatePartnershipMutation();
+  protected readonly deletePartnershipMutation = useDeletePartnershipMutation();
+
+  protected readonly isSavingTariffs = computed(() => 
+    this.updateTariffMutation.isPending() || this.updatePricingMutation.isPending()
+  );
+
+  protected readonly isAddingPartnership = computed(() => 
+    this.createPartnershipMutation.isPending()
+  );
 
   // Controle de Abas
   readonly activeTab = signal<'tariffs' | 'daily' | 'partnerships' | 'rules'>('tariffs');

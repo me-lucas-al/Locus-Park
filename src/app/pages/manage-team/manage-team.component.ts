@@ -10,10 +10,12 @@ import {
 } from '../../core/domains/user/user.hooks';
 import { ToastService } from '../../shared/services/toast.service';
 
+import { LoadingDirective } from '../../shared/directives/loading.directive';
+
 @Component({
   selector: 'app-manage-team',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoadingDirective],
   templateUrl: './manage-team.html',
   styleUrl: './manage-team.css',
 })
@@ -32,9 +34,13 @@ export class ManageTeam {
   protected readonly usersQuery = useUsersByCompanyQuery(this.companyId);
 
   // Mutações
-  private readonly createCollaboratorMutation = useCreateCollaboratorMutation();
-  private readonly deleteUserMutation = useDeleteUserMutation();
-  private readonly updateUserRoleMutation = useUpdateUserRoleMutation();
+  protected readonly createCollaboratorMutation = useCreateCollaboratorMutation();
+  protected readonly deleteUserMutation = useDeleteUserMutation();
+  protected readonly updateUserRoleMutation = useUpdateUserRoleMutation();
+
+  protected readonly isCreating = computed(() => 
+    this.createCollaboratorMutation.isPending() || this.updateUserRoleMutation.isPending()
+  );
 
   // Estados locais
   readonly searchTerm = signal('');

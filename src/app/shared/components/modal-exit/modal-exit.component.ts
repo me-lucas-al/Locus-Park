@@ -12,10 +12,12 @@ interface PaymentMethodOption {
   label: string;
 }
 
+import { LoadingDirective } from '../../directives/loading.directive';
+
 @Component({
   selector: 'app-modal-exit',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoadingDirective],
   templateUrl: './modal-exit.html',
   styleUrl: './modal-exit.css',
 })
@@ -28,9 +30,13 @@ export class ModalExit implements OnChanges {
   private readonly spotAssignmentService = inject(SpotAssignmentService);
 
   // Mutações e Queries
-  private readonly checkOutMutation = useCheckOutMutation();
-  private readonly applyPartnershipMutation = useApplyPartnershipMutation();
+  protected readonly checkOutMutation = useCheckOutMutation();
+  protected readonly applyPartnershipMutation = useApplyPartnershipMutation();
   protected readonly partnershipsQuery = usePartnershipsQuery();
+
+  protected readonly isCheckingOut = computed(() => 
+    this.checkOutMutation.isPending() || this.applyPartnershipMutation.isPending()
+  );
 
   protected getSpotNumber(): number {
     return this.ticket ? this.spotAssignmentService.getSpot(this.ticket) : 0;

@@ -3,17 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { useUserProfileQuery, useUpdateUserMutation } from '../../core/domains/user/user.hooks';
 import { ToastService } from '../../shared/services/toast.service';
+import { LoadingDirective } from '../../shared/directives/loading.directive';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoadingDirective],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
 export class Profile {
   protected readonly profileQuery = useUserProfileQuery();
-  private readonly updateUserMutation = useUpdateUserMutation();
+  protected readonly updateUserMutation = useUpdateUserMutation();
   private readonly toastService = inject(ToastService);
 
   readonly currentPassword = signal('');

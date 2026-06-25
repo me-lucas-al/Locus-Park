@@ -106,7 +106,7 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="btn-action">Alterar Senha</button>
+            <button type="submit" class="btn-action" [appLoading]="updateUserMutation.isPending()" loadingText="Salvando...">Alterar Senha</button>
           </div>
         </form>
       </div>

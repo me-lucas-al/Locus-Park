@@ -12,10 +12,12 @@ interface VagaOption {
   label: string;
 }
 
+import { LoadingDirective } from '../../shared/directives/loading.directive';
+
 @Component({
   selector: 'app-entry',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoadingDirective],
   templateUrl: './entry.component.html',
   styleUrl: './entry.component.css',
 })
@@ -31,8 +33,12 @@ export class Entry implements OnInit, OnDestroy {
   protected readonly companyId = computed(() => this.profileQuery.data()?.companyId || '');
 
   // Mutações
-  private readonly checkInMutation = useCheckInMutation();
-  private readonly createVehicleMutation = useCreateVehicleMutation(this.companyId);
+  protected readonly checkInMutation = useCheckInMutation();
+  protected readonly createVehicleMutation = useCreateVehicleMutation(this.companyId);
+
+  protected readonly isConfirming = computed(() => 
+    this.createVehicleMutation.isPending() || this.checkInMutation.isPending()
+  );
 
   // Estados locais do relógio
   readonly timeString = signal('');

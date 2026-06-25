@@ -52,7 +52,7 @@
         {{ erroLogin }}
       </div>
 
-      <button class="btn-entrar" (click)="entrar()">Entrar</button>
+      <button class="btn-entrar" [appLoading]="loginMutation.isPending()" loadingText="Entrando..." (click)="entrar()">Entrar</button>
 
       <p class="auth-footer">
         Não tem uma conta?

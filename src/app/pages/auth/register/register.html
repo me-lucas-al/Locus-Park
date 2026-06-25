@@ -118,7 +118,7 @@
 
       <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
 
-      <button class="btn-entrar" (click)="onSubmit()">Concluir Cadastro</button>
+      <button class="btn-entrar" [appLoading]="registerMutation.isPending()" loadingText="Cadastrando..." (click)="onSubmit()">Concluir Cadastro</button>
 
     </div>
   </div>
