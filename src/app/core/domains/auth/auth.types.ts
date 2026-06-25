@@ -8,6 +8,8 @@ export interface RegisterRequest {
   username: string;
   password: string;
   companyName: string;
+  cnpj?: string;
+  totalSpots?: number;
 }
 
 export interface AuthResponse {

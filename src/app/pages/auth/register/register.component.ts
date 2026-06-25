@@ -30,6 +30,28 @@ export class Register {
   private readonly registerMutation = useRegisterMutation();
   private readonly toastService = inject(ToastService);
 
+  onCnpjInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/\D/g, '');
+
+    if (value.length > 14) {
+      value = value.slice(0, 14);
+    }
+
+    if (value.length > 12) {
+      value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})$/, '$1.$2.$3/$4-$5');
+    } else if (value.length > 8) {
+      value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{1,4})$/, '$1.$2.$3/$4');
+    } else if (value.length > 5) {
+      value = value.replace(/^(\d{2})(\d{3})(\d{1,3})$/, '$1.$2.$3');
+    } else if (value.length > 2) {
+      value = value.replace(/^(\d{2})(\d{1,3})$/, '$1.$2');
+    }
+
+    this.form.cnpj = value;
+    input.value = value;
+  }
+
   onSubmit(): void {
     console.log('Register.onSubmit chamado com form:', this.form);
     this.errorMessage = '';
@@ -60,6 +82,8 @@ export class Register {
         password: password,
         companyName: companyName,
         name: username,
+        cnpj: cnpj.replace(/\D/g, ''),
+        totalSpots: Number(totalSpots),
       },
       {
         onSuccess: () => {
