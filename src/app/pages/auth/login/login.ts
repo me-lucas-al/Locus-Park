@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { useLoginMutation } from '../../../core/domains/auth/auth.hooks';
 import { UserService } from '../../../core/domains/user/user.service';
 import { AuthService } from '../../../core/domains/auth/auth.service';
+import { ToastService } from '../../../shared/services/toast.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -24,6 +25,7 @@ export class Login {
   private readonly loginMutation = useLoginMutation();
   private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   entrar(): void {
     console.log('Login.entrar chamado com usuário:', this.usuario);
@@ -31,6 +33,7 @@ export class Login {
 
     if (!this.usuario.trim() || !this.senha.trim()) {
       this.erroLogin = 'Preencha o usuário e a senha.';
+      this.toastService.error(this.erroLogin);
       return;
     }
 
@@ -45,13 +48,16 @@ export class Login {
             const profile = await lastValueFrom(this.userService.getProfile());
             this.authService.companyId.set(profile.companyId);
             localStorage.setItem('companyId', profile.companyId);
+            this.toastService.success('Login realizado com sucesso! Bem-vindo.');
             this.router.navigate(['/dashboard']);
           } catch (err: unknown) {
             this.erroLogin = 'Erro ao carregar os dados de perfil do usuário.';
+            this.toastService.error(this.erroLogin);
           }
         },
         onError: () => {
           this.erroLogin = 'Usuário ou senha incorretos.';
+          this.toastService.error(this.erroLogin);
         },
       }
     );

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { useRegisterMutation } from '../../../core/domains/auth/auth.hooks';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -27,6 +28,7 @@ export class Register {
 
   private readonly router = inject(Router);
   private readonly registerMutation = useRegisterMutation();
+  private readonly toastService = inject(ToastService);
 
   onSubmit(): void {
     console.log('Register.onSubmit chamado com form:', this.form);
@@ -36,16 +38,19 @@ export class Register {
 
     if (!companyName.trim() || !cnpj.trim() || !totalSpots || !username.trim() || !password || !confirmPassword) {
       this.errorMessage = 'Preencha todos os campos obrigatórios.';
+      this.toastService.error(this.errorMessage);
       return;
     }
 
     if (password !== confirmPassword) {
       this.errorMessage = 'As senhas não coincidem.';
+      this.toastService.error(this.errorMessage);
       return;
     }
 
     if (password.length < 6) {
       this.errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
+      this.toastService.error(this.errorMessage);
       return;
     }
 
@@ -58,10 +63,12 @@ export class Register {
       },
       {
         onSuccess: () => {
+          this.toastService.success('Cadastro realizado com sucesso!');
           this.router.navigate(['/login']);
         },
         onError: () => {
           this.errorMessage = 'Erro ao realizar o cadastro. Verifique as informações ou se o usuário já existe.';
+          this.toastService.error(this.errorMessage);
         },
       }
     );
