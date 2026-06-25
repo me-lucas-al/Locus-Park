@@ -9,12 +9,12 @@ import { ManageTeam } from './pages/manage-team/manage-team.component';
 import { SettingsPrice } from './pages/settings-price/settings-price.component';
 import { Profile } from './pages/profile/profile.component';
 import { Login } from './pages/auth/login/login';
-import { Cadastro } from './pages/auth/cadastro/cadastro';
+import { Register } from './pages/auth/register/register.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
-  { path: 'cadastro', component: Cadastro },
+  { path: 'cadastro', component: Register },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
   { path: 'entry', component: Entry, canActivate: [authGuard] },
