@@ -41,10 +41,6 @@ O projeto possui testes automatizados tanto no backend quanto no frontend:
 
 ---
 
-Aqui está o README com a seção exclusiva para o Swagger, para adicionar logo após a seção **🧠 Conceitos Arquiteturais**:
-
----
-
 ## 📖 Documentação da API (Swagger)
 
 A API possui documentação interativa gerada automaticamente pelo **SpringDoc OpenAPI**. Com o backend rodando, os seguintes endpoints ficam disponíveis:
