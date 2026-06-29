@@ -160,5 +160,3 @@ src/app/
   "companyId": "7359c468-4a16-46ad-b914-2c68d7a120db"
 }
 ```
-
-A única mudança foi adicionar a seção **✅ Cobertura de Testes** logo abaixo dos badges, antes da descrição. Também aproveitei para corrigir um pequeno typo que estava no original: `"Interfaces MapStruct deAlice conversão rápida"` → `"Interfaces MapStruct de conversão rápida"`.
