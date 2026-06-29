@@ -17,6 +17,10 @@
         "build": {
           "builder": "@ngx-env/builder:application",
           "options": {
+            "outputPath": {
+              "base": "dist/locus-park-front",
+              "browser": ""
+            },
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
