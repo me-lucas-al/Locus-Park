@@ -41,6 +41,19 @@ O projeto possui testes automatizados tanto no backend quanto no frontend:
 
 ---
 
+## 📖 Documentação da API (Swagger)
+
+A API possui documentação interativa gerada automaticamente pelo **SpringDoc OpenAPI**. Com o backend rodando, os seguintes endpoints ficam disponíveis:
+
+| Descrição | URL |
+|---|---|
+| Swagger UI (interface visual) | http://localhost:8080/swagger-ui.html |
+| Especificação OpenAPI (JSON) | http://localhost:8080/v3/api-docs |
+
+> O acesso à documentação é público e não exige autenticação JWT.
+
+---
+
 ## 🧠 Conceitos Arquiteturais e Boas Práticas Aplicados
 
 * *Value Objects (VOs)*: Encapsulamento de regras e validações estritas de negócio direto em tipos complexos customizados na camada global types, como Cpf, Cnpj e Plate (Placa com validação automática para os formatos Tradicional e Mercosul).
