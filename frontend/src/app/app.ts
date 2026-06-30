@@ -13,11 +13,25 @@ import { ToastComponent } from './shared/components/toast/toast.component';
 })
 export class App {
   protected readonly title = signal('locus-park-front');
+  protected readonly sidebarOpen = signal(false);
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    // Fecha a sidebar no mobile ao mudar de rota
+    this.router.events.subscribe(() => {
+      this.sidebarOpen.set(false);
+    });
+  }
 
   isAuthRoute(): boolean {
     const url = this.router.url;
     return url.startsWith('/login') || url.startsWith('/cadastro');
+  }
+
+  protected toggleSidebar(): void {
+    this.sidebarOpen.update((open) => !open);
+  }
+
+  protected closeSidebar(): void {
+    this.sidebarOpen.set(false);
   }
 }

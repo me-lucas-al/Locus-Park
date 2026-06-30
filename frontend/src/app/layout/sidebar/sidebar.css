@@ -100,3 +100,17 @@
   padding: 16px 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+    width: 260px; /* Um pouco mais larga para mobile */
+  }
+
+  :host.open .sidebar {
+    transform: translateX(0);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.35);
+  }
+}
