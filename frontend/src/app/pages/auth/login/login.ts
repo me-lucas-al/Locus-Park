@@ -57,8 +57,13 @@ export class Login {
             this.toastService.error(this.erroLogin);
           }
         },
-        onError: () => {
-          this.erroLogin = 'Usuário ou senha incorretos.';
+        onError: (err: any) => {
+          console.error('Erro ao realizar login:', err);
+          if (err?.status === 0 || err?.status >= 500) {
+            this.erroLogin = 'O servidor está iniciando. Por favor, aguarde alguns instantes e tente novamente.';
+          } else {
+            this.erroLogin = 'Usuário ou senha incorretos.';
+          }
           this.toastService.error(this.erroLogin);
         },
       }
