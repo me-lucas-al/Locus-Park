@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/domains/auth/auth.service';
+import { isAdmin } from '../../core/utils/jwt';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,6 +13,7 @@ import { AuthService } from '../../core/domains/auth/auth.service';
 export class Sidebar {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  protected readonly isAdmin = isAdmin;
 
   protected logout(): void {
     this.authService.logout();

@@ -30,8 +30,65 @@ body {
   margin-left: 0;
 }
 
+/* Toggle do menu mobile */
+.mobile-toggle-btn {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 150;
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.mobile-toggle-btn:hover {
+  background: #1a1a1a;
+  transform: scale(1.05);
+}
+
+.mobile-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @media (max-width: 768px) {
   .app-main {
     margin-left: 0;
+    padding-top: 76px; /* Abre espaço para o botão flutuante no topo */
+  }
+
+  .mobile-toggle-btn {
+    display: flex;
+  }
+
+  .sidebar-overlay {
+    display: block;
   }
 }
